@@ -1,75 +1,60 @@
-# React + TypeScript + Vite
+# VIN Decoder
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+SPA для розшифровки VIN-кодів автомобілів через відкрите API [NHTSA vPIC](https://vpic.nhtsa.dot.gov/api/).
 
-Currently, two official plugins are available:
+## Стек
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- React 19 + TypeScript
+- Vite
+- Tailwind CSS 4 (через `@tailwindcss/vite`, дизайн-токени в `src/styles/global.css`)
+- react-router-dom (маршрутизація без бекенду, `BrowserRouter`)
+- localStorage — зберігання історії останніх 3 розшифровок (без бекенду)
 
-## React Compiler
+## Запуск
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+npm install
+npm run dev       # dev-сервер, http://localhost:5173
+npm run build     # прод-збірка у dist/
+npm run preview   # локальний перегляд прод-збірки
+npm run lint       # oxlint
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Структура
 
 ```
+src/
+├── api/            # тонкий шар над NHTSA vPIC API (decodeVin, getVehicleVariablesList)
+├── components/     # переиспользуемые UI-блоки
+│   ├── VinForm/         — форма вводу VIN з валідацією
+│   ├── VinHistory/      — список останніх 3 запитів
+│   ├── DecodeResults/   — список Variable/Value з непустими Value
+│   └── VariableCard/    — рядок у списку /variables
+├── pages/
+│   ├── HomePage/            — "/"
+│   ├── VariablesPage/       — "/variables"
+│   └── VariableDetailsPage/ — "/variables/:variableId"
+├── hooks/
+│   ├── useVinDecoder.ts     — стан розшифровки, валідація, історія
+│   └── useLocalStorage.ts   — узагальнений хук для persist-стану
+├── types/vin.ts     # типи відповідей vPIC API та історії
+├── utils/vinValidation.ts  # валідація VIN (порожнє поле, довжина, заборонені символи)
+└── styles/global.css       # `@import "tailwindcss"` + дизайн-токени (`@theme`) + базові стилі
+```
+
+Стилі компонентів — утилітарні класи Tailwind прямо в JSX (окремих `*.css`-файлів
+на компонент немає, тільки спільні токени та `.card` у `global.css`).
+
+## Реалізовані вимоги
+
+- Форма підтримує валідацію: непорожнє поле, максимум 17 символів, лише допустимі
+  символи VIN (латинські літери, крім I/O/Q, та цифри).
+- Помилки валідації та повідомлення з поля `Message` відповіді API виводяться
+  безпосередньо в інтерфейсі (`role="alert"`).
+- Історія останніх 3 унікальних VIN зберігається у `localStorage` і дозволяє
+  повторно відобразити результат без нового запиту до API.
+- Сторінка `/variables` показує повний список змінних vPIC з пошуком за назвою;
+  `/variables/:variableId` — опис конкретної змінної.
+- Верстка адаптивна в діапазоні 420–1440px, без CSS-фреймворків, з увагою до
+  семантики (`header`/`nav`/`main`/`footer`, `dl`/`dt`/`dd` для пар Variable/Value,
+  `label`+`input`, `role="alert"`).
