@@ -17,7 +17,6 @@ npm install
 npm run dev       # dev-сервер, http://localhost:5173
 npm run build     # прод-збірка у dist/
 npm run preview   # локальний перегляд прод-збірки
-npm run lint       # oxlint
 ```
 
 ## Структура
@@ -58,3 +57,6 @@ src/
 - Верстка адаптивна в діапазоні 420–1440px, без CSS-фреймворків, з увагою до
   семантики (`header`/`nav`/`main`/`footer`, `dl`/`dt`/`dd` для пар Variable/Value,
   `label`+`input`, `role="alert"`).
+
+## Live Demo
+https://vin-decoder-app-test.vercel.app/
