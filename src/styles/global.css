@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #14171c;
+  --color-bg: #293345;
   --color-surface: #1b1f26;
   --color-surface-raised: #232832;
   --color-border: #2e3541;
@@ -26,9 +26,7 @@
 
   body {
     @apply bg-bg text-text font-sans antialiased m-0;
-    background-image:
-      radial-gradient(circle at 12% 8%, rgb(47 214 189 / 0.08), transparent 40%),
-      radial-gradient(circle at 88% 92%, rgb(47 214 189 / 0.05), transparent 45%);
+
   }
 
   h1,
