@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #14171c;
+  --color-surface: #1b1f26;
+  --color-surface-raised: #232832;
+  --color-border: #2e3541;
+  --color-text: #e8eaee;
+  --color-text-muted: #9aa2b1;
+  --color-accent: #2fd6bd;
+  --color-accent-dim: #1c8c7c;
+  --color-warning: #f5a623;
+  --color-danger: #f2645a;
+
+  --font-display: "Space Grotesk", "Segoe UI", sans-serif;
+  --font-mono: "Space Mono", "SFMono-Regular", Consolas, monospace;
+  --font-sans: "Inter", "Segoe UI", system-ui, sans-serif;
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-bg text-text font-sans antialiased m-0;
+    background-image:
+      radial-gradient(circle at 12% 8%, rgb(47 214 189 / 0.08), transparent 40%),
+      radial-gradient(circle at 88% 92%, rgb(47 214 189 / 0.05), transparent 45%);
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display font-semibold tracking-tight m-0;
+  }
+
+  p {
+    @apply m-0;
+  }
+
+  a {
+    @apply text-accent no-underline;
+  }
+
+  a:hover,
+  a:focus-visible {
+    @apply underline;
+  }
+
+  ul,
+  ol {
+    @apply m-0 p-0 list-none;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-accent outline-offset-2;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-surface border border-border rounded-lg p-6 max-[480px]:p-4;
+  }
+}
